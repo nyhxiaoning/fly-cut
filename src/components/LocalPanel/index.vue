@@ -1,78 +1,149 @@
 <template>
   <div class="p-4 flex-1 overflow-hidden flex flex-col">
-    <div class="bg-zinc-200 h-10 flex items-center justify-center rounded text-sm text-gray-900 cursor-pointer" @click="onUpload">
-      <i class="iconfont icon-shangchuan_line mr-2" />
-      本地音频
-    </div>
+    <AssetList type="all" upload-text="上传素材" @upload="onUpload" @add-track="addToTrack" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { usePlayerState } from '@/stores/playerState';
-  import { useTrackState } from '@/stores/trackState';
-  import { AudioClip } from '@webav/av-cliper';
   import { ElMessage } from 'element-plus';
+  import { useTrackState } from '@/stores/trackState';
+  import { usePlayerState } from '@/stores/playerState';
+  import { useResourceStore } from '@/stores/resourceStore';
+  import { imageDecoder, videoDecoder, audioDecoder } from '@/utils/webcodecs';
   import { selectFile } from '@/utils/file';
   import { getMD5 } from '@/class/Base';
+  import { ImageTrack } from '@/class/ImageTrack';
+  import { VideoTrack } from '@/class/VideoTrack';
   import { AudioTrack } from '@/class/AudioTrack';
-  import { audioDecoder } from '@/utils/webcodecs';
-
-  const selectedMenu = ref('recommend');
-  function onSelect(selected: { value: string }) {
-    selectedMenu.value = selected.value;
-  }
+  import type { ResourceItem } from '@/stores/resourceStore';
+  import type { ImageSource } from '@/class/ImageTrack';
 
   const trackStore = useTrackState();
   const playStore = usePlayerState();
+  const resourceStore = useResourceStore();
+
+  async function generateThumbnailFromFrame(frame: VideoFrame, maxSize = 120): Promise<string> {
+    const canvas = document.createElement('canvas');
+    let w = frame.codedWidth;
+    let h = frame.codedHeight;
+    if (w > h) {
+      if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
+    } else {
+      if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
+    }
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(frame, 0, 0, w, h);
+    return canvas.toDataURL('image/png');
+  }
+
+  async function generateVideoThumbnail(clip: Awaited<ReturnType<typeof videoDecoder.decode>>): Promise<string | undefined> {
+    if (!clip) return undefined;
+    try {
+      const frame = await clip.tick(1e6);
+      if (!frame.video) return undefined;
+      const result = await generateThumbnailFromFrame(frame.video);
+      frame.video.close();
+      return result;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async function handleFile(file: File) {
+    const id = await getMD5(await file.arrayBuffer());
+
+    if (file.type.startsWith('image/')) {
+      const frames = await imageDecoder.decode({ id, stream: file.stream(), type: file.type });
+      if (!frames) {
+        ElMessage.error(`解析图片失败: ${file.name}`);
+        return;
+      }
+      let thumbnail: string | undefined;
+      try {
+        thumbnail = await generateThumbnailFromFrame(frames[0]);
+      } catch { /* non-critical */ }
+      const url = URL.createObjectURL(file);
+      resourceStore.addResource({
+        id, name: file.name, type: 'image', format: file.type,
+        fileSize: file.size, url, thumbnail,
+        width: frames[0].codedWidth, height: frames[0].codedHeight,
+        createdAt: Date.now()
+      });
+    } else if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm)$/i)) {
+      const clip = await videoDecoder.decode({ id, stream: file.stream(), type: file.type });
+      if (!clip) {
+        ElMessage.error(`解析视频失败: ${file.name}`);
+        return;
+      }
+      const thumbnail = await generateVideoThumbnail(clip);
+      const url = URL.createObjectURL(file);
+      resourceStore.addResource({
+        id, name: file.name, type: 'video', format: file.type,
+        fileSize: file.size, url, thumbnail,
+        width: clip.meta.width, height: clip.meta.height,
+        duration: Math.round(clip.meta.duration / 1e6),
+        createdAt: Date.now()
+      });
+    } else if (file.type.startsWith('audio/')) {
+      const clip = await audioDecoder.decode({ id, stream: file.stream(), type: file.type });
+      if (!clip) {
+        ElMessage.error(`解析音频失败: ${file.name}`);
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      resourceStore.addResource({
+        id, name: file.name, type: 'audio', format: file.type,
+        fileSize: file.size, url,
+        duration: Math.round(clip.meta.duration / 1e6),
+        createdAt: Date.now()
+      });
+    }
+  }
 
   async function onUpload() {
-    // 上传素材
-    const files = await selectFile({ accept: 'audio/*,image/*,.mp4,.mov', multiple: true });
-
-    // 1.根据素材的文件类型做不同的处理
-    // 2.处理素材
-    // 3.存储素材信息
-    // 4.存储素材
-    // Array.from(files).map(async file => {
-    //   const id = await getMD5(await file.arrayBuffer());
-    //   if (file.type.includes('audio')) {
-    //     // 处理音频
-    //     const clip = await audioDecoder.decode({ id, stream: file.stream(), type: file.type });
-
-    //     if (!clip) {
-    //       // 提示解析视频失败
-    //       ElMessage.error('解析音频失败');
-    //       return Promise.reject();
-    //     }
-    //   } else if (file.type.includes('image')) {
-    //     // 处理图片
-    //   } else if (file.type.includes('video')) {
-    //     // 处理视频
-    //   }
-    // });
-
-    const id = await getMD5(await files[0].arrayBuffer());
-
-    const clip = await audioDecoder.decode({ id, stream: files[0].stream(), type: files[0].type });
-
-    if (!clip) {
-      // 提示解析视频失败
-      ElMessage.error('解析音频失败');
-      return;
+    const files = await selectFile({ accept: 'image/*,audio/*,.mp4,.mov,.webm', multiple: true });
+    for (const file of files) {
+      try {
+        await handleFile(file);
+      } catch (e) {
+        ElMessage.error(`处理文件失败: ${file.name}`);
+      }
     }
+    ElMessage.success('素材上传完成');
+  }
 
-    const audioTrack = new AudioTrack({
-      id,
-      url: URL.createObjectURL(files[0]),
-      name: files[0].name,
-      format: files[0].type,
-      duration: Math.round(clip.meta.duration / 1e6)
-    }, playStore.playStartFrame);
-
-    trackStore.addTrack(audioTrack);
+  function addToTrack(resource: ResourceItem) {
+    switch (resource.type) {
+      case 'image': {
+        const imageSource: ImageSource = {
+          id: resource.id, url: resource.id, name: resource.name,
+          format: resource.format, width: resource.width || 0, height: resource.height || 0
+        };
+        const track = new ImageTrack(imageSource, playStore.playStartFrame);
+        track.resize({ width: playStore.playerWidth, height: playStore.playerHeight });
+        trackStore.addTrack(track);
+        break;
+      }
+      case 'video': {
+        const track = new VideoTrack({
+          id: resource.id, url: resource.url, name: resource.name,
+          format: resource.format, width: resource.width || 0,
+          height: resource.height || 0, duration: resource.duration || 0
+        }, playStore.playStartFrame);
+        track.resize({ width: playStore.playerWidth, height: playStore.playerHeight });
+        trackStore.addTrack(track);
+        break;
+      }
+      case 'audio': {
+        const track = new AudioTrack({
+          id: resource.id, url: resource.url, name: resource.name,
+          format: resource.format, duration: resource.duration || 0
+        }, playStore.playStartFrame);
+        trackStore.addTrack(track);
+        break;
+      }
+    }
   }
 </script>
-
-<style scoped>
-
-</style>

@@ -6,6 +6,7 @@ import App from './App.vue';
 import './assets/main.css';
 import '@/assets/iconfont/iconfont.css';
 import 'element-plus/es/components/message/style/css';
+import 'element-plus/es/components/message-box/style/css';
 
 import installIcon from '@/plugins/installIcon'; // icon 注册
 import { router } from '@/plugins/installRouter'; // 路由注册
