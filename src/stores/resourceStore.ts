@@ -16,7 +16,7 @@ export interface ResourceItem {
   createdAt: number
 }
 
-interface ResourceMeta extends Omit<ResourceItem, 'url'> {}
+type ResourceMeta = Omit<ResourceItem, 'url'>;
 
 const STORAGE_KEY = 'fly-cut-resources';
 
@@ -34,27 +34,29 @@ export const useResourceStore = defineStore('resourceStore', () => {
       }
       const metas: ResourceMeta[] = rawMetas;
       const items: ResourceItem[] = [];
-
-      for (const meta of metas) {
+      const restorePromises = metas.map(async meta => {
         if (!meta || !meta.id) {
           console.warn('Skip invalid resource meta:', meta);
-          continue;
+          return null;
         }
         try {
           const opfsFileHandle = opfsFile(meta.id);
           const exists = await opfsFileHandle.exists();
           if (!exists) {
             console.warn('OPFS file not found for resource:', meta.id);
-            continue;
+            return null;
           }
           const stream = await opfsFileHandle.stream();
           const blob = await new Response(stream).blob();
           const url = URL.createObjectURL(blob);
-          items.push({ ...meta, url });
+          return { ...meta, url };
         } catch (e) {
           console.warn('Failed to restore resource:', meta.id, e);
+          return null;
         }
-      }
+      });
+      const results = await Promise.all(restorePromises);
+      results.forEach(r => { if (r) items.push(r); });
 
       resourceList.value = items;
     } catch (e) {

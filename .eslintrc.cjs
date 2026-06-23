@@ -26,7 +26,8 @@ module.exports = {
     'require': true,
     FileSystemWritableFileStream: 'readonly',
     FileSystemFileHandle: 'readonly',
-    ParentMethod: 'readonly'
+    ParentMethod: 'readonly',
+    VideoFrame: 'readonly'
   },
   ignorePatterns: [
     '.eslintrc.cjs',

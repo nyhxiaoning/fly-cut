@@ -26,12 +26,12 @@
     let h = frame.codedHeight;
     if (w > h) {
       if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
-    } else {
-      if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
+    } else if (h > maxSize) {
+      w = Math.round(w * maxSize / h); h = maxSize;
     }
     canvas.width = w;
     canvas.height = h;
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(frame, 0, 0, w, h);
     return canvas.toDataURL('image/png');
   }

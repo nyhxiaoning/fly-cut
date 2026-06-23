@@ -28,12 +28,12 @@
     let h = frame.codedHeight;
     if (w > h) {
       if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
-    } else {
-      if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
+    } else if (h > maxSize) {
+      w = Math.round(w * maxSize / h); h = maxSize;
     }
     canvas.width = w;
     canvas.height = h;
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(frame, 0, 0, w, h);
     return canvas.toDataURL('image/png');
   }
@@ -104,13 +104,9 @@
 
   async function onUpload() {
     const files = await selectFile({ accept: 'image/*,audio/*,.mp4,.mov,.webm', multiple: true });
-    for (const file of files) {
-      try {
-        await handleFile(file);
-      } catch (e) {
-        ElMessage.error(`处理文件失败: ${file.name}`);
-      }
-    }
+    await Promise.all(files.map(file => handleFile(file).catch(() => {
+      ElMessage.error(`处理文件失败: ${file.name}`);
+    })));
     ElMessage.success('素材上传完成');
   }
 
@@ -144,6 +140,8 @@
         trackStore.addTrack(track);
         break;
       }
+      default:
+        break;
     }
   }
 </script>

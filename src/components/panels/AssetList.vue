@@ -18,7 +18,7 @@
       >
         <!-- Thumbnail / Icon -->
         <div class="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-zinc-200 flex items-center justify-center">
-          <img v-if="resource.thumbnail" :src="resource.thumbnail" class="w-full h-full object-cover" />
+          <img v-if="resource.thumbnail" :src="resource.thumbnail" class="w-full h-full object-cover">
           <i v-else class="iconfont text-lg text-gray-400" :class="typeIcon" />
         </div>
         <!-- Info -->
