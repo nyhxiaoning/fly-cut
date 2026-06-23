@@ -26,6 +26,8 @@
         v-bind="draggableOptions"
         @drag="onDrag"
         @scale="onScale"
+        @resize-start="onResizeStart"
+        @resize="onResize"
     />
   </div>
 </template>
@@ -120,6 +122,52 @@
     trackStore.trackList[lineindex].list[itemindex].centerY = y;
     target.style.transform = transform;
   }
+  interface ResizeStartState {
+    startWidth: number
+    startHeight: number
+    startCenterX: number
+    startCenterY: number
+    direction: number[]
+  }
+  const resizeState = ref<ResizeStartState | null>(null);
+
+  function onResizeStart(params: Record<string, any>) {
+    const { target, direction } = params;
+    const { lineindex, itemindex } = target.dataset;
+    if (lineindex === undefined || itemindex === undefined) return;
+    const item = trackStore.trackList[lineindex].list[itemindex];
+    if (!item) return;
+    resizeState.value = {
+      startWidth: item.width,
+      startHeight: item.height,
+      startCenterX: item.centerX,
+      startCenterY: item.centerY,
+      direction
+    };
+  }
+
+  function onResize(params: Record<string, any>) {
+    const { target, width, height, direction, transform } = params;
+    const { lineindex, itemindex } = target.dataset;
+    const state = resizeState.value;
+    if (!state || lineindex === undefined || itemindex === undefined) return;
+    const item = trackStore.trackList[lineindex].list[itemindex];
+    if (!item) return;
+
+    const dirX = state.direction[0] || 0;
+    const dirY = state.direction[1] || 0;
+    const deltaW = width - state.startWidth;
+    const deltaH = height - state.startHeight;
+
+    item.width = Math.round(Math.max(width, 10));
+    item.height = Math.round(Math.max(height, 10));
+    item.centerX = Math.round(state.startCenterX + (dirX * deltaW) / 2);
+    item.centerY = Math.round(state.startCenterY + (dirY * deltaH) / 2);
+
+    target.style.width = `${item.width}px`;
+    target.style.height = `${item.height}px`;
+  }
+
   function onScale(params: Record<string, any>) {
     let { target, scale, transform } = params;
     const { lineindex, itemindex } = target.dataset;

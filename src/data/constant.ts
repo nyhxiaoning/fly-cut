@@ -16,7 +16,7 @@ export const FileTypeMap = {
 };
 export const defaultMoveOptions = {
   draggable: true,
-  resizable: false,
+  resizable: true,
   scalable: true,
   dragArea: false, // 开启 控制拖动区域
   origin: false, // 原点是否可见

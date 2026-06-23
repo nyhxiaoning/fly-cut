@@ -23,6 +23,18 @@ export const Options = {
                                                     attr: {
                                                         controlsPosition: 'right'
                                                     }, name: 'y', mappingKey: 'centerY', defaultValue: 0
+                                                }),
+                                                mappingFormItem('Number', {
+                                                    attr: {
+                                                        controlsPosition: 'right',
+                                                        min: 1
+                                                    }, name: '宽', mappingKey: 'width', defaultValue: 0
+                                                }),
+                                                mappingFormItem('Number', {
+                                                    attr: {
+                                                        controlsPosition: 'right',
+                                                        min: 1
+                                                    }, name: '高', mappingKey: 'height', defaultValue: 0
                                                 })
                                             ]
                                         }),
