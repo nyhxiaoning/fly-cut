@@ -401,11 +401,6 @@
     "@babel/helper-skip-transparent-expression-wrappers" "^7.29.7"
     "@babel/plugin-syntax-typescript" "^7.29.7"
 
-"@babel/runtime@^7.12.5":
-  version "7.29.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.29.7.tgz#12022450c45a4da6d8d8287b18a4ff2ddb23f768"
-  integrity sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==
-
 "@babel/standalone@^7.21.3":
   version "7.22.5"
   resolved "https://registry.npmmirror.com/@babel/standalone/-/standalone-7.22.5.tgz#91a55e725e93d65241e0ccd8b0c3c7067258da3c"
@@ -1496,11 +1491,6 @@
   resolved "https://registry.npmmirror.com/@types/chai/-/chai-4.3.5.tgz#ae69bcbb1bebb68c4ac0b11e9d8ed04526b3562b"
   integrity sha512-mEo1sAde+UCE6b2hxn332f1g1E8WfYRu6p5SvTKr2ZKC1f7gFJXk4h5PyGP9Dt6gCaG8y8XhwnXWC6Iy2cmBng==
 
-"@types/dom-webcodecs@^0.1.7":
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/@types/dom-webcodecs/-/dom-webcodecs-0.1.18.tgz#0a4a26ffef72e584976ca8bdaefc3119b533a5c4"
-  integrity sha512-vAvE8C9DGWR+tkb19xyjk1TSUlJ7RUzzp4a9Anu7mwBT+fpyePWK1UxmH14tMO5zHmrnrRIMg5NutnnDztLxgg==
-
 "@types/estree@^1.0.0":
   version "1.0.1"
   resolved "https://registry.npmmirror.com/@types/estree/-/estree-1.0.1.tgz#aa22750962f3bf0e79d753d3cc067f010c95f194"
@@ -1660,14 +1650,6 @@
   dependencies:
     "@typescript-eslint/types" "5.59.9"
     eslint-visitor-keys "^3.3.0"
-
-"@videojs/vhs-utils@^4.1.1":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@videojs/vhs-utils/-/vhs-utils-4.1.2.tgz#d49053b23d63cb73660858403bf78d248de764e9"
-  integrity sha512-1Dsv5dtWOq0LP1G37O46FQFA2tKAZON5UMe6dFPxT7JvPhEx8QIXcFQxan8+hHI3fX6aomFRFrUBJNgRYQDSXA==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    global "^4.4.0"
 
 "@vitejs/plugin-basic-ssl@^1.0.1":
   version "1.0.1"
@@ -2003,39 +1985,35 @@
   dependencies:
     vue-demi "*"
 
-"@webav/av-canvas@0.9.0-beta.21":
-  version "0.9.0-beta.21"
-  resolved "https://registry.yarnpkg.com/@webav/av-canvas/-/av-canvas-0.9.0-beta.21.tgz#d4b3845baf6086653def5709b08bc794c6874027"
-  integrity sha512-Z9rUTyYHE6aTLu/Sw574yAM8cwDQWPrM5HpzgyPzA7akaB4fRympusCK880C2C0dH3vXurjf+W7tHcbir1t8rw==
+"@webav/av-canvas@1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@webav/av-canvas/-/av-canvas-1.0.19.tgz#223cf57e1644a7701d13aaff0ba7583a5357ada3"
+  integrity sha512-/o1kZYPl5yZO16Jjjw4VB+Fxc6apI5+B2lR+WJ1kJmeGig51g82rnC4mRRUd6kQPOz5ZvFGLDP9Chi030mXcLw==
   dependencies:
-    "@webav/av-cliper" "^0.9.0-beta.21"
+    "@webav/av-cliper" "1.0.19"
+    "@webav/internal-utils" "1.0.19"
 
-"@webav/av-cliper@0.9.0-beta.21":
-  version "0.9.0-beta.21"
-  resolved "https://registry.yarnpkg.com/@webav/av-cliper/-/av-cliper-0.9.0-beta.21.tgz#ef2158a25efd98d76d97fd9bd44443085e3c6cbe"
-  integrity sha512-z/pank6XYVp1Q1yX2heBfGLvxTVa1iEX8uK5nSr9EcOk7Vh4NSjMxfw0b+m4O4h8wH5EL+CbFkzxbkexYNa4yw==
+"@webav/av-cliper@1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@webav/av-cliper/-/av-cliper-1.0.19.tgz#7ff11a5d5206384826f6f06e3a37e3a33a426aec"
+  integrity sha512-UnqHssRTd47CdX1jKwUEnat9p/UIUiygvUPqNVB3+djq1T7PrDw6Jdbv4cPBF1tI2gH3wGfr6YxFJi0HHB78Zg==
   dependencies:
-    "@types/dom-webcodecs" "^0.1.7"
-    "@webav/mp4box.js" "0.5.3-fenghen"
-    m3u8-parser "^7.1.0"
-    opfs-tools "^0.5.1"
+    "@webav/internal-utils" "1.0.19"
+    "@webav/mp4box.js" "0.5.6"
+    opfs-tools "^0.7.0"
     wave-resampler "^1.0.0"
 
-"@webav/av-cliper@^0.9.0-beta.21":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@webav/av-cliper/-/av-cliper-0.9.0.tgz#0019b598d95e98dee8075948cd8d5402ba334521"
-  integrity sha512-BTbU+hfpl0/rYaMLG0EtDKT2WBd1dLK9io+vqk0AxqOf4f2KBYdNXlFB4N4HeOac2hLG+8bR6nhYCgOltaW3Tw==
+"@webav/internal-utils@1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@webav/internal-utils/-/internal-utils-1.0.19.tgz#a9aacea2d229c869bb594dd132dc83664ec58d95"
+  integrity sha512-H34n4nsXlUCuij0lmFQKiKJjJgr9l+/z1MBi6/IzPECyw02DKrFEL4UO9pE0KFNtNYj26nkIoqoG7EBnAb8QGQ==
   dependencies:
-    "@types/dom-webcodecs" "^0.1.7"
-    "@webav/mp4box.js" "0.5.3-fenghen"
-    m3u8-parser "^7.1.0"
-    opfs-tools "^0.5.1"
-    wave-resampler "^1.0.0"
+    "@webav/mp4box.js" "0.5.6"
 
-"@webav/mp4box.js@0.5.3-fenghen":
-  version "0.5.3-fenghen"
-  resolved "https://registry.yarnpkg.com/@webav/mp4box.js/-/mp4box.js-0.5.3-fenghen.tgz#2a5e744f78e21749e3ab13116129d99247bc4d23"
-  integrity sha512-jAN15I3Po1Z6Ns02iknb6KGbird9rd1h9TGldzbwsar+88ZlHd+oVjOQnFavBdNDc5vmULUnldcWGDdKc02npw==
+"@webav/mp4box.js@0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@webav/mp4box.js/-/mp4box.js-0.5.6.tgz#b78d7d5daeca92ced00d7397b4e0e7e4eb12af1b"
+  integrity sha512-DpZQlr624oyLwnmJjNIWggk4d2dfKsAwQdNMVf0akjx0BtXL45Fmd49tm0ekn9d9dB3zBIxxsgco5IcJQGpt4Q==
 
 abab@^2.0.6:
   version "2.0.6"
@@ -2761,11 +2739,6 @@ dom-serializer@^1.0.1:
     domhandler "^4.2.0"
     entities "^2.0.0"
 
-dom-walk@^0.1.0:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
-  integrity sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==
-
 domelementtype@^2.0.1, domelementtype@^2.2.0:
   version "2.3.0"
   resolved "https://registry.npmmirror.com/domelementtype/-/domelementtype-2.3.0.tgz#5c45e8e869952626331d7aab326d01daf65d589d"
@@ -3451,14 +3424,6 @@ glob@^8.0.3:
     minimatch "^5.0.1"
     once "^1.3.0"
 
-global@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/global/-/global-4.4.0.tgz#3e7b105179006a323ed71aafca3e9c57a5cc6406"
-  integrity sha512-wv/LAoHdRE3BeTGz53FAamhGlPLhlssK45usmGFThIi4XqnBmjKQ16u+RNbP7WvigRZDxUsM0J3gcQ5yicaL0w==
-  dependencies:
-    min-document "^2.19.0"
-    process "^0.11.10"
-
 globals@^11.1.0:
   version "11.12.0"
   resolved "https://registry.npmmirror.com/globals/-/globals-11.12.0.tgz#ab8795338868a0babd8525758018c2a7eb95c42e"
@@ -4136,15 +4101,6 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-m3u8-parser@^7.1.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/m3u8-parser/-/m3u8-parser-7.2.0.tgz#9e2eb50abb8349d248cd58842367da4acabdf297"
-  integrity sha512-CRatFqpjVtMiMaKXxNvuI3I++vUumIXVVT/JpCpdU/FynV/ceVw1qpPyyBNindL+JlPMSesx+WX1QJaZEJSaMQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@videojs/vhs-utils" "^4.1.1"
-    global "^4.4.0"
-
 magic-string@^0.27.0:
   version "0.27.0"
   resolved "https://registry.npmmirror.com/magic-string/-/magic-string-0.27.0.tgz#e4a3413b4bab6d98d2becffd48b4a257effdbbf3"
@@ -4233,13 +4189,6 @@ mimic-fn@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmmirror.com/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
-
-min-document@^2.19.0:
-  version "2.19.2"
-  resolved "https://registry.yarnpkg.com/min-document/-/min-document-2.19.2.tgz#f95db44639eaae3ac8ea85ae6809ae85ff7e3b81"
-  integrity sha512-8S5I8db/uZN8r9HSLFVWPdJCvYOejMcEC82VIzNUc6Zkklf/d1gg2psfE79/vyhWOj4+J8MtwmoOz3TmvaGu5A==
-  dependencies:
-    dom-walk "^0.1.0"
 
 mini-svg-data-uri@^1.2.3:
   version "1.4.4"
@@ -4551,10 +4500,10 @@ opfs-tools@^0.4.1:
   resolved "https://registry.yarnpkg.com/opfs-tools/-/opfs-tools-0.4.3.tgz#15d6d479be6d3a5af729922e724cadad983d58f0"
   integrity sha512-tIg2uPhh7Ax5wAmdQYsjsJG8475vErs0kC6NZIWD7EOv3wADE4KB8b2USPRtqCLyEO3B51NNg9bSKtx8phq1Vw==
 
-opfs-tools@^0.5.1:
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/opfs-tools/-/opfs-tools-0.5.9.tgz#82fbbfde117010d36f0e2fd4c24c688154d2c0e8"
-  integrity sha512-jguYgwIXWrKK+v1KuVYha9853otUQvrc2jIeurm3EP53hEL1EBBKGDzkVUmR3A1J/i1IKiyJ9wgDCcdMxebvUA==
+opfs-tools@^0.7.0:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/opfs-tools/-/opfs-tools-0.7.4.tgz#999df0940c3bc0b79080a9977f44509b5637e41c"
+  integrity sha512-DJgQnXyPcCj3q8pKa8SjP4HfNBPffj8kO6W1nc2zQydTqu5G/AxOuIjmWnRxZ84nE1EOpzZzhj8MYCZP1jRR9A==
 
 optionator@^0.8.1:
   version "0.8.3"
@@ -5055,11 +5004,6 @@ process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.npmmirror.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
-
-process@^0.11.10:
-  version "0.11.10"
-  resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
-  integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
 proto-list@~1.2.1:
   version "1.2.4"

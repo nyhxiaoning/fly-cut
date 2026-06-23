@@ -22,10 +22,10 @@
   const playStore = usePlayerState();
   const resourceStore = useResourceStore();
 
-  async function generateThumbnailFromFrame(frame: VideoFrame, maxSize = 120): Promise<string> {
+  async function generateThumbnailFromBitmap(bitmap: ImageBitmap, maxSize = 120): Promise<string> {
     const canvas = document.createElement('canvas');
-    let w = frame.codedWidth;
-    let h = frame.codedHeight;
+    let w = bitmap.width;
+    let h = bitmap.height;
     if (w > h) {
       if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
     } else if (h > maxSize) {
@@ -34,7 +34,8 @@
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(frame, 0, 0, w, h);
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
     return canvas.toDataURL('image/png');
   }
 
@@ -43,7 +44,7 @@
     try {
       const frame = await clip.tick(1e6);
       if (!frame.video) return undefined;
-      const result = await generateThumbnailFromFrame(frame.video);
+      const result = await generateThumbnailFromBitmap(frame.video as ImageBitmap);
       frame.video.close();
       return result;
     } catch {
@@ -55,20 +56,23 @@
     const id = await getMD5(await file.arrayBuffer());
 
     if (file.type.startsWith('image/')) {
-      const frames = await imageDecoder.decode({ id, stream: file.stream(), type: file.type });
-      if (!frames) {
+      const clip = await imageDecoder.decode({ id, stream: file.stream(), type: file.type });
+      if (!clip) {
         ElMessage.error(`解析图片失败: ${file.name}`);
         return;
       }
       let thumbnail: string | undefined;
       try {
-        thumbnail = await generateThumbnailFromFrame(frames[0]);
+        const frame = await clip.tick(0);
+        if (frame.video) {
+          thumbnail = await generateThumbnailFromBitmap(frame.video as ImageBitmap);
+        }
       } catch { /* non-critical */ }
       const url = URL.createObjectURL(file);
       resourceStore.addResource({
         id, name: file.name, type: 'image', format: file.type,
         fileSize: file.size, url, thumbnail,
-        width: frames[0].codedWidth, height: frames[0].codedHeight,
+        width: clip.meta.width, height: clip.meta.height,
         createdAt: Date.now()
       });
     } else if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm)$/i)) {

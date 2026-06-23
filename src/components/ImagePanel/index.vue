@@ -20,10 +20,10 @@
   const playStore = usePlayerState();
   const resourceStore = useResourceStore();
 
-  async function generateThumbnail(frame: VideoFrame, maxSize = 120): Promise<string> {
+  async function generateThumbnailFromBitmap(bitmap: ImageBitmap, maxSize = 120): Promise<string> {
     const canvas = document.createElement('canvas');
-    let w = frame.codedWidth;
-    let h = frame.codedHeight;
+    let w = bitmap.width;
+    let h = bitmap.height;
     if (w > h) {
       if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
     } else if (h > maxSize) {
@@ -32,7 +32,8 @@
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(frame, 0, 0, w, h);
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
     return canvas.toDataURL('image/png');
   }
 
@@ -40,9 +41,9 @@
     const files = await selectFile({ accept: 'image/*', multiple: false });
 
     const id = await getMD5(await files[0].arrayBuffer());
-    const frames = await imageDecoder.decode({ id, stream: files[0].stream(), type: files[0].type });
+    const clip = await imageDecoder.decode({ id, stream: files[0].stream(), type: files[0].type });
 
-    if (!frames) {
+    if (!clip) {
       ElMessage.error('解析图片失败');
       return;
     }
@@ -50,7 +51,10 @@
     // Generate thumbnail
     let thumbnail: string | undefined;
     try {
-      thumbnail = await generateThumbnail(frames[0]);
+      const frame = await clip.tick(0);
+      if (frame.video) {
+        thumbnail = await generateThumbnailFromBitmap(frame.video as ImageBitmap);
+      }
     } catch {
       // Thumbnail generation is non-critical
     }
@@ -66,8 +70,8 @@
       fileSize: files[0].size,
       url,
       thumbnail,
-      width: frames[0].codedWidth,
-      height: frames[0].codedHeight,
+      width: clip.meta.width,
+      height: clip.meta.height,
       createdAt: Date.now()
     });
 

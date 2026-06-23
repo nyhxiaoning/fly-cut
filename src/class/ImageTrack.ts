@@ -88,11 +88,10 @@ export class ImageTrack implements BaseTractItem {
   }
   // 生成合成对象
   async combine(playerSize: { width: number, height: number }, outputRatio: number) {
-    const frames = await imageDecoder.decode({ id: this.source.id });
-    if (!frames) {
-      throw new Error('frames is not ready');
+    const clip = await imageDecoder.decode({ id: this.source.id });
+    if (!clip) {
+      throw new Error('clip is not ready');
     }
-    const clip = new ImgClip(frames);
     const spr = new OffscreenSprite(clip);
     // TODO：需要支持裁剪
     spr.time = { offset: this.start * UnitFrame2μs, duration: this.frameCount * UnitFrame2μs };

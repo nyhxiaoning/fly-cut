@@ -72,15 +72,35 @@ export class VideoTrack implements BaseTractItem {
    * TODO: 不需要没一次都去解码
    * TODO: 优化画布渲染
    */
-  draw(ctx: CanvasRenderingContext2D, { width, height }: { width: number, height: number }, frameIndex: number) {
-    const frame = Math.max(frameIndex - this.start + this.offsetL, 1); // 默认展示首帧
-    const start = performance.now();
+  draw(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, { width, height }: { width: number, height: number }, frameIndex: number) {
+    const frame = Math.max(frameIndex - this.start + this.offsetL, 1);
     return videoDecoder.getFrame(this.source.id, frame).then(async vf => {
       if (vf) {
-        console.log('渲染耗时', performance.now() - start, 'ms');
-        ctx.drawImage(vf, 0, 0, this.source.width, this.source.height, this.getDrawX(width), this.getDrawY(height), this.drawWidth, this.drawHeight);
-        vf?.close();
+        try {
+          (ctx as CanvasRenderingContext2D).drawImage(vf, 0, 0, this.source.width, this.source.height, this.getDrawX(width), this.getDrawY(height), this.drawWidth, this.drawHeight);
+        } catch (e) {
+          console.warn('VideoTrack drawImage failed:', e);
+        } finally {
+          vf.close();
+        }
+        return undefined;
       }
+
+      // 视频帧为空时尝试显示首帧
+      return videoDecoder.getFrame(this.source.id, 0).then(firstFrame => {
+        if (firstFrame) {
+          try {
+            (ctx as CanvasRenderingContext2D).drawImage(firstFrame, 0, 0, this.source.width, this.source.height, this.getDrawX(width), this.getDrawY(height), this.drawWidth, this.drawHeight);
+          } catch (e) {
+            console.warn('VideoTrack drawImage (fallback) failed:', e);
+          } finally {
+            firstFrame.close();
+          }
+        }
+      });
+    })
+    .catch(e => {
+      console.warn(`VideoTrack.getFrame failed for "${this.name}":`, e);
     });
   }
   resize({ width, height }: { width: number, height: number }) {

@@ -22,11 +22,11 @@ export default defineConfig({
     https: OpenSSl && {
       key: fs.readFileSync('viteUtil/cert/key.pem'),
       cert: fs.readFileSync('viteUtil/cert/cert.pem')
+    },
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
     }
-    // headers: {
-    //   'Cross-Origin-Opener-Policy': 'same-origin',
-    //   'Cross-Origin-Embedder-Policy': 'require-corp'
-    // }
   },
   plugins: [
     VitePluginVueDevtools(),
