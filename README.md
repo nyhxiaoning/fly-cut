@@ -1,4 +1,5 @@
 # fly-cut
+## 环境准备：yarn安装
 
 ## 简介
 基于Webcodecs + Vue3实现的Web端剪辑工具 <br/>
