@@ -73,7 +73,7 @@ class VideoDecoder {
   async getFrame(url: string, frameIndex: number) {
     let clip = this.#decoderMap.get(url);
     if (!clip) {
-      clip = await this.decode({ url })
+      clip = await this.decode({ id: url })
     }
 
     // tick根据时间获取帧，可能存在这一时间帧为空的情况，修改为在范围内寻找帧
@@ -120,7 +120,7 @@ class ImageDecoder {
   async getFrame(type: string, url: string, frameIndex: number) {
     let frames = this.#decoderMap.get(url);
     if (!frames) {
-      await this.decode({ url, type });
+      await this.decode({ id: url, type });
       frames = this.#decoderMap.get(url);
     }
     return frames?.[frameIndex % frames.length];
