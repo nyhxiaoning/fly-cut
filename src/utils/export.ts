@@ -121,6 +121,22 @@ function addSubtitles(
 }
 
 /**
+ * 当输出比例与播放器比例不一致时，将精灵重新居中于输出画幅内
+ */
+function recenterSprite(spr: OffscreenSprite, outW: number, outH: number): void {
+  const rw = spr.rect.w;
+  const rh = spr.rect.h;
+  const rx = spr.rect.x;
+  const ry = spr.rect.y;
+
+  // 检查精灵是否超出输出画幅边界
+  if (rx < 0 || ry < 0 || rx + rw > outW || ry + rh > outH) {
+    spr.rect.x = (outW - rw) / 2;
+    spr.rect.y = (outH - rh) / 2;
+  }
+}
+
+/**
  * 执行视频导出
  *
  * 与原始 HeaderContainer.vue 的 onGenerate 保持完全一致的核心逻辑：
@@ -171,6 +187,17 @@ export async function startExport(
     }
 
     let sprites = (await Promise.all(spritePromises)).filter(Boolean) as OffscreenSprite[];
+
+    // ---- 当输出比例与播放器比例不一致时，重新计算精灵位置 ----
+    const playerAspect = (ps.playerWidth || 180) / (ps.playerHeight || 320);
+    const outputAspect = options.width / options.height;
+    if (Math.abs(playerAspect - outputAspect) > 0.01) {
+      for (const s of sprites) {
+        if (s.zIndex !== 9999) { // 跳过字幕精灵
+          recenterSprite(s, options.width, options.height);
+        }
+      }
+    }
 
     // ---- 字幕 ----
     if (options.includeSubtitles) {
