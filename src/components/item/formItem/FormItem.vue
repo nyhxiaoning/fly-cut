@@ -112,7 +112,6 @@
   import { ref, computed } from 'vue';
   import { useTrackState } from '@/stores/trackState';
   import { storeToRefs } from 'pinia';
-  import { get, set } from 'lodash-es';
   const props = defineProps({
     componentData: {
       type: Object,
@@ -131,14 +130,14 @@
   const formValue = computed({
     get() {
       if (selectResource.value) {
-        return get(toRaw(trackList.value[selectTrackItem.value.line].list[selectTrackItem.value.index]), props.componentData.mappingKey);
+        return trackList.value[selectTrackItem.value.line]?.list?.[selectTrackItem.value.index]?.[props.componentData.mappingKey] as any ?? props.componentData.defaultValue ?? null;
       } else {
         return null;
       }
     },
     set(value) {
       if (selectResource.value && props.componentData.mappingKey) {
-        set(trackList.value[selectTrackItem.value.line].list[selectTrackItem.value.index], props.componentData.mappingKey, value);
+        trackList.value[selectTrackItem.value.line].list[selectTrackItem.value.index][props.componentData.mappingKey] = value;
       }
     }
   });
